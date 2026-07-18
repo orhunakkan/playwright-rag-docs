@@ -1,0 +1,10 @@
+{
+  "name": "playwright-rag-docs",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Orhun Akkan",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {}
+}
