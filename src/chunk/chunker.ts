@@ -1,10 +1,11 @@
 import GithubSlugger from 'github-slugger';
 import { toString as mdastToString } from 'mdast-util-to-string';
 import { remark } from 'remark';
-import type { Chunk, DocType } from '../types.js';
+import type { Chunk, DocType, Language } from '../types.js';
 import { resolveHeading, stripSlugComments } from './slugify.js';
 
 export interface ChunkMeta {
+  language: Language;
   docType: DocType;
   fileSlug: string;
   sourceUrl: string;
@@ -67,10 +68,11 @@ export function chunkMarkdown(markdown: string, meta: ChunkMeta): Chunk[] {
   const introContent = stripSlugComments(markdown.slice(0, introEnd)).trim();
   if (introContent.length > 0) {
     chunks.push({
-      id: `${meta.docType}/${meta.fileSlug}#_intro`,
+      id: `${meta.language}/${meta.docType}/${meta.fileSlug}#_intro`,
       title: docTitle,
       headingPath: [],
       content: introContent,
+      language: meta.language,
       docType: meta.docType,
       sourceUrl: meta.sourceUrl,
       sourceFile: meta.sourceFile,
@@ -83,10 +85,11 @@ export function chunkMarkdown(markdown: string, meta: ChunkMeta): Chunk[] {
     const end = i + 1 < boundaries.length ? boundaries[i + 1].offset : markdown.length;
     const content = stripSlugComments(markdown.slice(boundary.offset, end)).trim();
     chunks.push({
-      id: `${meta.docType}/${meta.fileSlug}#${boundary.slug}`,
+      id: `${meta.language}/${meta.docType}/${meta.fileSlug}#${boundary.slug}`,
       title: boundary.title,
       headingPath: boundary.headingPath,
       content,
+      language: meta.language,
       docType: meta.docType,
       sourceUrl: `${meta.sourceUrl}#${boundary.slug}`,
       sourceFile: meta.sourceFile,

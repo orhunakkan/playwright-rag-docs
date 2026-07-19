@@ -1,11 +1,12 @@
 import { search } from '@orama/orama';
 import type { Db } from './buildIndex.js';
 import { embedText } from './embed.js';
-import type { DocType } from '../types.js';
+import type { DocType, Language } from '../types.js';
 
 export interface SearchOptions {
   limit?: number;
   docType?: DocType;
+  language?: Language;
 }
 
 export interface SearchResult {
@@ -14,12 +15,17 @@ export interface SearchResult {
   title: string;
   headingPath: string;
   content: string;
+  language: Language;
   docType: DocType;
   sourceUrl: string;
 }
 
 export async function hybridSearch(db: Db, queryText: string, options: SearchOptions = {}): Promise<SearchResult[]> {
   const vector = await embedText(queryText);
+  const where: Record<string, { eq: string }> = {};
+  if (options.docType) where.docType = { eq: options.docType };
+  if (options.language) where.language = { eq: options.language };
+
   const results = await search(db, {
     mode: 'hybrid',
     term: queryText,
@@ -33,7 +39,7 @@ export async function hybridSearch(db: Db, queryText: string, options: SearchOpt
     // queries against this corpus (see docs/ideas/playwright-rag-docs-mvp.md).
     similarity: 0.1,
     hybridWeights: { text: 0.3, vector: 0.7 },
-    where: options.docType ? { docType: { eq: options.docType } } : undefined,
+    where: Object.keys(where).length > 0 ? where : undefined,
     limit: options.limit ?? 5
   });
 
@@ -43,6 +49,7 @@ export async function hybridSearch(db: Db, queryText: string, options: SearchOpt
     title: hit.document.title,
     headingPath: hit.document.headingPath,
     content: hit.document.content,
+    language: hit.document.language as Language,
     docType: hit.document.docType as DocType,
     sourceUrl: hit.document.sourceUrl
   }));

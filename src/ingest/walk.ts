@@ -25,7 +25,7 @@ export async function readSourceFiles(repoPath: string, source: SourceDescriptor
   const docs: RawDoc[] = [];
   for (const relPath of relPaths) {
     const raw = await readFile(join(subdirAbsPath, relPath), 'utf8');
-    docs.push({ docType: source.docType, relPath, raw });
+    docs.push({ language: source.language, docType: source.docType, relPath, raw });
   }
   return docs;
 }

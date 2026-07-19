@@ -22,7 +22,7 @@ function formatResults(results: SearchResult[]): string {
   return results
     .map((result) => {
       const path = result.headingPath ? `${result.title} > ${result.headingPath}` : result.title;
-      return `### ${path}\n\n${result.content}\n\nSource: ${result.sourceUrl}`;
+      return `### [${result.language}] ${path}\n\n${result.content}\n\nSource: ${result.sourceUrl}`;
     })
     .join('\n\n---\n\n');
 }
@@ -30,18 +30,19 @@ function formatResults(results: SearchResult[]): string {
 server.registerTool(
   'search_playwright_docs',
   {
-    title: 'Search Playwright Node.js Docs',
+    title: 'Search Playwright Docs',
     description:
-      "Hybrid (keyword + semantic) search over Playwright's Node.js documentation (API reference, guides, MCP, and agent CLI docs). Returns cited excerpts with source URLs.",
+      "Hybrid (keyword + semantic) search over Playwright's documentation across Node.js, Python, Java, and .NET (API reference and guides for all four; MCP and agent CLI docs are Node.js-tooling-only). Returns cited excerpts with source URLs. Pass `language` when you know the calling project's language — unfiltered queries search all four and may mix languages in the results.",
     inputSchema: {
       query: z.string().describe('Natural-language question or exact API name (e.g. "page.locator" or "how do I wait for network idle")'),
       limit: z.number().int().min(1).max(20).optional().describe('Max results to return (default 5)'),
-      docType: z.enum(['agent-cli', 'api', 'guides', 'mcp']).optional().describe('Restrict results to one doc category')
+      docType: z.enum(['agent-cli', 'api', 'guides', 'mcp']).optional().describe('Restrict results to one doc category'),
+      language: z.enum(['nodejs', 'python', 'java', 'dotnet']).optional().describe('Restrict results to one language (recommended when known)')
     }
   },
-  async ({ query, limit, docType }) => {
+  async ({ query, limit, docType, language }) => {
     const db = await getDb();
-    const results = await hybridSearch(db, query, { limit, docType });
+    const results = await hybridSearch(db, query, { limit, docType, language });
     return { content: [{ type: 'text', text: formatResults(results) }] };
   }
 );

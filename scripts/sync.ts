@@ -6,25 +6,25 @@ import { SOURCES } from '../src/ingest/sources.js';
 import { readSourceFiles } from '../src/ingest/walk.js';
 import { buildFileContent, buildSourceUrl, flattenRelPath, writeNormalizedFile } from '../src/ingest/write.js';
 import { createDb, indexChunks, persistIndex } from '../src/search/buildIndex.js';
-import type { Chunk, DocType, SyncMeta } from '../src/types.js';
+import type { Chunk, DocType, Language, SyncMeta } from '../src/types.js';
 
 async function main() {
   console.log('Cloning microsoft/playwright.dev (shallow)...');
   const { repoPath, commitSha } = await cloneDocsRepo();
 
   const allChunks: Chunk[] = [];
-  const countsByDocType: Record<DocType, number> = {
-    'agent-cli': 0,
-    api: 0,
-    guides: 0,
-    mcp: 0
+  const counts: Record<Language, Partial<Record<DocType, number>>> = {
+    nodejs: {},
+    python: {},
+    java: {},
+    dotnet: {}
   };
 
   try {
     for (const source of SOURCES) {
       const rawDocs = await readSourceFiles(repoPath, source);
-      console.log(`  ${source.docType}: ${rawDocs.length} file(s)`);
-      countsByDocType[source.docType] = rawDocs.length;
+      console.log(`  ${source.language}/${source.docType}: ${rawDocs.length} file(s)`);
+      counts[source.language][source.docType] = rawDocs.length;
 
       for (const rawDoc of rawDocs) {
         const { body } = normalizeMdx(rawDoc.raw);
@@ -34,6 +34,7 @@ async function main() {
         const outPath = (await writeNormalizedFile(source, fileSlug, fileContent)).split('\\').join('/');
 
         const chunks = chunkMarkdown(fileContent, {
+          language: source.language,
           docType: source.docType,
           fileSlug,
           sourceUrl,
@@ -53,20 +54,23 @@ async function main() {
   await indexChunks(db, allChunks);
   await persistIndex(db);
 
-  const docCount = Object.values(countsByDocType).reduce((a, b) => a + b, 0);
+  const docCount = Object.values(counts)
+    .flatMap((byDocType) => Object.values(byDocType))
+    .reduce((a: number, b) => a + (b ?? 0), 0);
+
   const meta: SyncMeta = {
     commitSha,
     syncedAt: new Date().toISOString(),
     docCount,
     chunkCount: allChunks.length,
-    countsByDocType
+    counts
   };
   await mkdir('data', { recursive: true });
   await writeFile('data/sync-meta.json', JSON.stringify(meta, null, 2), 'utf8');
 
   console.log('Sync complete.');
   console.log(`  commit: ${commitSha}`);
-  console.log(`  docs: ${docCount} ${JSON.stringify(countsByDocType)}`);
+  console.log(`  docs: ${docCount} ${JSON.stringify(counts)}`);
   console.log(`  chunks: ${allChunks.length}`);
 }
 

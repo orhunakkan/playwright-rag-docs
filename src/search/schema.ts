@@ -2,6 +2,7 @@ import { EMBEDDING_DIM } from './embed.js';
 
 export const schema = {
   id: 'string',
+  language: 'enum',
   docType: 'enum',
   title: 'string',
   headingPath: 'string',

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { chunkMarkdown, type ChunkMeta } from '../src/chunk/chunker.js';
 
 const meta: ChunkMeta = {
+  language: 'nodejs',
   docType: 'guides',
   fileSlug: 'locators',
   sourceUrl: 'https://playwright.dev/docs/locators',
@@ -14,7 +15,7 @@ describe('chunkMarkdown', () => {
     const markdown = `# Locators\n\nIntro paragraph text.\n\n## Locating elements\n\nBody.\n`;
     const chunks = chunkMarkdown(markdown, meta);
 
-    expect(chunks[0].id).toBe('guides/locators#_intro');
+    expect(chunks[0].id).toBe('nodejs/guides/locators#_intro');
     expect(chunks[0].headingPath).toEqual([]);
     expect(chunks[0].content).toContain('Intro paragraph text.');
   });
@@ -110,5 +111,43 @@ Second overview section with the same heading text.
     expect(overviewChunks).toHaveLength(2);
     const slugs = overviewChunks.map((c) => c.id.split('#')[1]);
     expect(new Set(slugs).size).toBe(2);
+  });
+
+  it('dedupes two different headings that share the same explicit slug comment', () => {
+    // Real upstream quirk: .NET's class-browsercontext.mdx gives two distinct
+    // methods the identical explicit anchor slug.
+    const markdown = `# BrowserContext
+
+## Methods
+
+### RunAndWaitForConsoleMessageAsync {/* #browser-context-wait-for-console-message */}
+
+First method.
+
+### WaitForConsoleMessageAsync {/* #browser-context-wait-for-console-message */}
+
+Second method.
+`;
+    const chunks = chunkMarkdown(markdown, { ...meta, docType: 'api', fileSlug: 'class-browsercontext' });
+    const ids = chunks.map((c) => c.id);
+
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toContain('nodejs/api/class-browsercontext#browser-context-wait-for-console-message');
+    expect(ids).toContain('nodejs/api/class-browsercontext#browser-context-wait-for-console-message-1');
+  });
+
+  it('produces distinct ids for the same docType/fileSlug/heading across languages', () => {
+    const markdown = `# Page\n\n## Methods\n\n### locator {/* #page-locator */}\n\nReturns a locator.\n`;
+    const nodejsMeta: ChunkMeta = { ...meta, language: 'nodejs', docType: 'api', fileSlug: 'class-page' };
+    const pythonMeta: ChunkMeta = { ...meta, language: 'python', docType: 'api', fileSlug: 'class-page' };
+
+    const nodejsChunk = chunkMarkdown(markdown, nodejsMeta).find((c) => c.id.endsWith('#page-locator'));
+    const pythonChunk = chunkMarkdown(markdown, pythonMeta).find((c) => c.id.endsWith('#page-locator'));
+
+    expect(nodejsChunk).toBeDefined();
+    expect(pythonChunk).toBeDefined();
+    expect(nodejsChunk!.id).not.toBe(pythonChunk!.id);
+    expect(nodejsChunk!.id).toBe('nodejs/api/class-page#page-locator');
+    expect(pythonChunk!.id).toBe('python/api/class-page#page-locator');
   });
 });

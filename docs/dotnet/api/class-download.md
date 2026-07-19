@@ -1,0 +1,269 @@
+# Download
+
+> **Source:** [playwright.dev/dotnet/docs/api/class-download](https://playwright.dev/dotnet/docs/api/class-download)
+
+---
+
+Download objects are dispatched by page via the [Page.Download](/api/class-page.mdx#page-event-download) event.
+
+All the downloaded files belonging to the browser context are deleted when the browser context is closed.
+
+Download event is emitted once the download starts. Download path becomes available once download completes.
+
+```csharp
+// Start the task of waiting for the download before clicking
+var waitForDownloadTask = page.WaitForDownloadAsync();
+await page.GetByText("Download file").ClickAsync();
+var download = await waitForDownloadTask;
+
+// Wait for the download process to complete and save the downloaded file somewhere
+await download.SaveAsAsync("/path/to/save/at/" + download.SuggestedFilename);
+```
+
+
+---
+
+## Methods
+
+### CancelAsync {/* #download-cancel */}
+
+
+
+Cancels a download. Will not fail if the download is already finished or canceled. Upon successful cancellations, `download.failure()` would resolve to `'canceled'`.
+
+**Usage**
+
+```csharp
+await Download.CancelAsync();
+```
+
+**Returns**
+- void
+
+---
+
+### CreateReadStreamAsync {/* #download-create-read-stream */}
+
+
+
+Returns a readable stream for a successful download, or throws for a failed/canceled download.
+
+:::note
+
+If you don't need a readable stream, it's usually simpler to read the file from disk after the download completed. See [Download.PathAsync()](/api/class-download.mdx#download-path).
+:::
+
+**Usage**
+
+```csharp
+await Download.CreateReadStreamAsync();
+```
+
+**Returns**
+- Stream
+
+---
+
+### DeleteAsync {/* #download-delete */}
+
+
+
+Deletes the downloaded file. Will wait for the download to finish if necessary.
+
+**Usage**
+
+```csharp
+await Download.DeleteAsync();
+```
+
+**Returns**
+- void
+
+---
+
+### FailureAsync {/* #download-failure */}
+
+
+
+Returns download error if any. Will wait for the download to finish if necessary.
+
+**Usage**
+
+```csharp
+await Download.FailureAsync();
+```
+
+**Returns**
+- string?
+
+---
+
+### Page {/* #download-page */}
+
+
+
+Get the page that the download belongs to.
+
+**Usage**
+
+```csharp
+Download.Page
+```
+
+**Returns**
+- Page
+
+---
+
+### PathAsync {/* #download-path */}
+
+
+
+Returns path to the downloaded file for a successful download, or throws for a failed/canceled download. The method will wait for the download to finish if necessary. The method throws when connected remotely.
+
+Note that the download's file name is a random GUID, use [Download.SuggestedFilename](/api/class-download.mdx#download-suggested-filename) to get suggested file name.
+
+**Usage**
+
+```csharp
+await Download.PathAsync();
+```
+
+**Returns**
+- string
+
+---
+
+### SaveAsAsync {/* #download-save-as */}
+
+
+
+Copy the download to a user-specified path. It is safe to call this method while the download is still in progress. Will wait for the download to finish if necessary.
+
+**Usage**
+
+```csharp
+await download.SaveAsAsync("/path/to/save/at/" + download.SuggestedFilename);
+```
+
+**Arguments**
+- `path` string
+  
+  Path where the download should be copied.
+
+**Returns**
+- void
+
+---
+
+### SuggestedFilename {/* #download-suggested-filename */}
+
+
+
+Returns suggested filename for this download. It is typically computed by the browser from the [`Content-Disposition`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition) response header or the `download` attribute. See the spec on [whatwg](https://html.spec.whatwg.org/#downloading-resources). Different browsers can use different logic for computing it.
+
+**Usage**
+
+```csharp
+Download.SuggestedFilename
+```
+
+**Returns**
+- string
+
+---
+
+### Url {/* #download-url */}
+
+
+
+Returns downloaded url.
+
+**Usage**
+
+```csharp
+Download.Url
+```
+
+**Returns**
+- string
+
+
+APIRequest: /api/class-apirequest.mdx "APIRequest"
+APIRequestContext: /api/class-apirequestcontext.mdx "APIRequestContext"
+APIResponse: /api/class-apiresponse.mdx "APIResponse"
+APIResponseAssertions: /api/class-apiresponseassertions.mdx "APIResponseAssertions"
+Browser: /api/class-browser.mdx "Browser"
+BrowserContext: /api/class-browsercontext.mdx "BrowserContext"
+BrowserType: /api/class-browsertype.mdx "BrowserType"
+CDPSession: /api/class-cdpsession.mdx "CDPSession"
+CDPSessionEvent: /api/class-cdpsessionevent.mdx "CDPSessionEvent"
+Clock: /api/class-clock.mdx "Clock"
+ConsoleMessage: /api/class-consolemessage.mdx "ConsoleMessage"
+Credentials: /api/class-credentials.mdx "Credentials"
+Debugger: /api/class-debugger.mdx "Debugger"
+Dialog: /api/class-dialog.mdx "Dialog"
+Download: /api/class-download.mdx "Download"
+ElementHandle: /api/class-elementhandle.mdx "ElementHandle"
+FileChooser: /api/class-filechooser.mdx "FileChooser"
+FormData: /api/class-formdata.mdx "FormData"
+Frame: /api/class-frame.mdx "Frame"
+FrameLocator: /api/class-framelocator.mdx "FrameLocator"
+JSHandle: /api/class-jshandle.mdx "JSHandle"
+Keyboard: /api/class-keyboard.mdx "Keyboard"
+Locator: /api/class-locator.mdx "Locator"
+LocatorAssertions: /api/class-locatorassertions.mdx "LocatorAssertions"
+Mouse: /api/class-mouse.mdx "Mouse"
+Page: /api/class-page.mdx "Page"
+PageAssertions: /api/class-pageassertions.mdx "PageAssertions"
+Playwright: /api/class-playwright.mdx "Playwright"
+PlaywrightAssertions: /api/class-playwrightassertions.mdx "PlaywrightAssertions"
+Request: /api/class-request.mdx "Request"
+Response: /api/class-response.mdx "Response"
+Route: /api/class-route.mdx "Route"
+Screencast: /api/class-screencast.mdx "Screencast"
+Selectors: /api/class-selectors.mdx "Selectors"
+TimeoutError: /api/class-timeouterror.mdx "TimeoutError"
+Touchscreen: /api/class-touchscreen.mdx "Touchscreen"
+Tracing: /api/class-tracing.mdx "Tracing"
+Video: /api/class-video.mdx "Video"
+WebError: /api/class-weberror.mdx "WebError"
+WebSocket: /api/class-websocket.mdx "WebSocket"
+WebSocketFrame: /api/class-websocketframe.mdx "WebSocketFrame"
+WebSocketRoute: /api/class-websocketroute.mdx "WebSocketRoute"
+WebStorage: /api/class-webstorage.mdx "WebStorage"
+Worker: /api/class-worker.mdx "Worker"
+Element: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
+EvaluationArgument: /evaluating.mdx#evaluation-argument "EvaluationArgument"
+Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
+iterator: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
+origin: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
+selector: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors "selector"
+Serializable: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description "Serializable"
+UIEvent.detail: https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail "UIEvent.detail"
+UnixTime: https://en.wikipedia.org/wiki/Unix_time "Unix Time"
+xpath: https://developer.mozilla.org/en-US/docs/Web/XPath "xpath"
+
+bool: https://docs.microsoft.com/en-us/dotnet/api/system.boolean "bool"
+Date: https://learn.microsoft.com/en-us/dotnet/api/system.datetime "DateTime"
+double: https://docs.microsoft.com/en-us/dotnet/api/system.double "double"
+byte: https://docs.microsoft.com/en-us/dotnet/api/system.byte "byte"
+int: https://docs.microsoft.com/en-us/dotnet/api/system.int32 "int"
+long: https://docs.microsoft.com/en-us/dotnet/api/system.int64 "long"
+void: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/void "void"
+string: https://docs.microsoft.com/en-us/dotnet/api/system.string "string"
+URL: https://nodejs.org/api/url.html "URL"
+Regex: https://docs.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex "Regex"
+
+Action: https://docs.microsoft.com/en-us/dotnet/api/system.action-1 "Action"
+Func: https://docs.microsoft.com/en-us/dotnet/api/system.func-2 "Func"
+IEnumerable: https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable "IEnumerable"
+IReadOnlyList: https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlylist-1?view=net-9.0 "IReadOnlyList"
+IDictionary: https://docs.microsoft.com/en-us/dotnet/api/system.collections.idictionary "IDictionary"
+Task: https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task?view=net-5.0 "Task"
+IReadOnlyDictionary: https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlydictionary-2 "IReadOnlyDictionary"
+JsonElement: https://docs.microsoft.com/en-us/dotnet/api/system.text.json.jsonelement "JsonElement"
+
+all available image tags: https://mcr.microsoft.com/en-us/product/playwright/dotnet/about "all available image tags"
+Microsoft Artifact Registry: https://mcr.microsoft.com/en-us/product/playwright/dotnet/about "Microsoft Artifact Registry"
+Dockerfile.noble: https://github.com/microsoft/playwright-dotnet/blob/main/utils/docker/Dockerfile.noble "Dockerfile.noble"
