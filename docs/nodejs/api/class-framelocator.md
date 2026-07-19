@@ -1,0 +1,652 @@
+# FrameLocator
+
+> **Source:** [playwright.dev/docs/api/class-framelocator](https://playwright.dev/docs/api/class-framelocator)
+
+---
+
+FrameLocator represents a view to the `iframe` on the page. It captures the logic sufficient to retrieve the `iframe` and locate elements in that iframe. FrameLocator can be created with either [locator.contentFrame()](/api/class-locator.mdx#locator-content-frame), [page.frameLocator()](/api/class-page.mdx#page-frame-locator) or [locator.frameLocator()](/api/class-locator.mdx#locator-frame-locator) method.
+
+```js
+const locator = page.locator('#my-frame').contentFrame().getByText('Submit');
+await locator.click();
+```
+
+**Strictness**
+
+Frame locators are strict. This means that all operations on frame locators will throw if more than one element matches a given selector.
+
+```js
+// Throws if there are several frames in DOM:
+await page.locator('.result-frame').contentFrame().getByRole('button').click();
+
+// Works because we explicitly tell locator to pick the first frame:
+await page.locator('.result-frame').contentFrame().first().getByRole('button').click();
+```
+
+**Converting Locator to FrameLocator**
+
+If you have a Locator object pointing to an `iframe` it can be converted to FrameLocator using [locator.contentFrame()](/api/class-locator.mdx#locator-content-frame).
+
+**Converting FrameLocator to Locator**
+
+If you have a FrameLocator object it can be converted to Locator pointing to the same `iframe` using [frameLocator.owner()](/api/class-framelocator.mdx#frame-locator-owner).
+
+
+---
+
+## Methods
+
+### frameLocator {/* #frame-locator-frame-locator */}
+
+
+
+When working with iframes, you can create a frame locator that will enter the iframe and allow selecting elements in that iframe.
+
+**Usage**
+
+```js
+frameLocator.frameLocator(selector);
+```
+
+**Arguments**
+- `selector` string
+  
+  A selector to use when resolving DOM element.
+
+**Returns**
+- FrameLocator
+
+---
+
+### getByAltText {/* #frame-locator-get-by-alt-text */}
+
+
+
+Allows locating elements by their alt text.
+
+**Usage**
+
+For example, this method will find the image by alt text "Playwright logo":
+
+```html
+<img alt='Playwright logo'>
+```
+
+```js
+await page.getByAltText('Playwright logo').click();
+```
+
+**Arguments**
+- `text` string | RegExp
+  
+  Text to locate the element for.
+- `options` Object *(optional)*
+  - `exact` boolean *(optional)*
+    
+    Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace.
+
+**Returns**
+- Locator
+
+---
+
+### getByLabel {/* #frame-locator-get-by-label */}
+
+
+
+Allows locating input elements by the text of the associated `<label>` or `aria-labelledby` element, or by the `aria-label` attribute.
+
+**Usage**
+
+For example, this method will find inputs by label "Username" and "Password" in the following DOM:
+
+```html
+<input aria-label="Username">
+<label for="password-input">Password:</label>
+<input id="password-input">
+```
+
+```js
+await page.getByLabel('Username').fill('john');
+await page.getByLabel('Password').fill('secret');
+```
+
+**Arguments**
+- `text` string | RegExp
+  
+  Text to locate the element for.
+- `options` Object *(optional)*
+  - `exact` boolean *(optional)*
+    
+    Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace.
+
+**Returns**
+- Locator
+
+---
+
+### getByPlaceholder {/* #frame-locator-get-by-placeholder */}
+
+
+
+Allows locating input elements by the placeholder text.
+
+**Usage**
+
+For example, consider the following DOM structure.
+
+```html
+<input type="email" placeholder="name@example.com" />
+```
+
+You can fill the input after locating it by the placeholder text:
+
+```js
+await page
+    .getByPlaceholder('name@example.com')
+    .fill('playwright@microsoft.com');
+```
+
+**Arguments**
+- `text` string | RegExp
+  
+  Text to locate the element for.
+- `options` Object *(optional)*
+  - `exact` boolean *(optional)*
+    
+    Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace.
+
+**Returns**
+- Locator
+
+---
+
+### getByRole {/* #frame-locator-get-by-role */}
+
+
+
+Allows locating elements by their [ARIA role](https://www.w3.org/TR/wai-aria-1.2/#roles), [ARIA attributes](https://www.w3.org/TR/wai-aria-1.2/#aria-attributes) and [accessible name](https://w3c.github.io/accname/#dfn-accessible-name).
+
+**Usage**
+
+Consider the following DOM structure.
+
+```html
+<h3>Sign up</h3>
+<label>
+  <input type="checkbox" /> Subscribe
+</label>
+<br/>
+<button>Submit</button>
+```
+
+You can locate each element by its implicit role:
+
+```js
+await expect(page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
+
+await page.getByRole('checkbox', { name: 'Subscribe' }).check();
+
+await page.getByRole('button', { name: /submit/i }).click();
+```
+
+**Arguments**
+- `role` "alert" | "alertdialog" | "application" | "article" | "banner" | "blockquote" | "button" | "caption" | "cell" | "checkbox" | "code" | "columnheader" | "combobox" | "complementary" | "contentinfo" | "definition" | "deletion" | "dialog" | "directory" | "document" | "emphasis" | "feed" | "figure" | "form" | "generic" | "grid" | "gridcell" | "group" | "heading" | "img" | "insertion" | "link" | "list" | "listbox" | "listitem" | "log" | "main" | "marquee" | "math" | "meter" | "menu" | "menubar" | "menuitem" | "menuitemcheckbox" | "menuitemradio" | "navigation" | "none" | "note" | "option" | "paragraph" | "presentation" | "progressbar" | "radio" | "radiogroup" | "region" | "row" | "rowgroup" | "rowheader" | "scrollbar" | "search" | "searchbox" | "separator" | "slider" | "spinbutton" | "status" | "strong" | "subscript" | "superscript" | "switch" | "tab" | "table" | "tablist" | "tabpanel" | "term" | "textbox" | "time" | "timer" | "toolbar" | "tooltip" | "tree" | "treegrid" | "treeitem"
+  
+  Required aria role.
+- `options` Object *(optional)*
+  - `checked` boolean *(optional)*
+    
+    An attribute that is usually set by `aria-checked` or native `<input type=checkbox>` controls.
+    
+    Learn more about [`aria-checked`](https://www.w3.org/TR/wai-aria-1.2/#aria-checked).
+  - `description` string | RegExp *(optional)* 
+    
+    Option to match the [accessible description](https://w3c.github.io/accname/#dfn-accessible-description). By default, matching is case-insensitive and searches for a substring, use [exact](/api/class-framelocator.mdx#frame-locator-get-by-role-option-exact) to control this behavior.
+    
+    Learn more about [accessible description](https://w3c.github.io/accname/#dfn-accessible-description).
+  - `disabled` boolean *(optional)*
+    
+    An attribute that is usually set by `aria-disabled` or `disabled`.
+    
+    :::note
+    
+    Unlike most other attributes, `disabled` is inherited through the DOM hierarchy. Learn more about [`aria-disabled`](https://www.w3.org/TR/wai-aria-1.2/#aria-disabled).
+    :::
+    
+  - `exact` boolean *(optional)* 
+    
+    Whether [name](/api/class-framelocator.mdx#frame-locator-get-by-role-option-name) and [description](/api/class-framelocator.mdx#frame-locator-get-by-role-option-description) are matched exactly: case-sensitive and whole-string. Defaults to false. Ignored when the value is a regular expression. Note that exact match still trims whitespace.
+  - `expanded` boolean *(optional)*
+    
+    An attribute that is usually set by `aria-expanded`.
+    
+    Learn more about [`aria-expanded`](https://www.w3.org/TR/wai-aria-1.2/#aria-expanded).
+  - `includeHidden` boolean *(optional)*
+    
+    Option that controls whether hidden elements are matched. By default, only non-hidden elements, as [defined by ARIA](https://www.w3.org/TR/wai-aria-1.2/#tree_exclusion), are matched by role selector.
+    
+    Learn more about [`aria-hidden`](https://www.w3.org/TR/wai-aria-1.2/#aria-hidden).
+  - `level` number *(optional)*
+    
+    A number attribute that is usually present for roles `heading`, `listitem`, `row`, `treeitem`, with default values for `<h1>-<h6>` elements.
+    
+    Learn more about [`aria-level`](https://www.w3.org/TR/wai-aria-1.2/#aria-level).
+  - `name` string | RegExp *(optional)*
+    
+    Option to match the [accessible name](https://w3c.github.io/accname/#dfn-accessible-name). By default, matching is case-insensitive and searches for a substring, use [exact](/api/class-framelocator.mdx#frame-locator-get-by-role-option-exact) to control this behavior.
+    
+    Learn more about [accessible name](https://w3c.github.io/accname/#dfn-accessible-name).
+  - `pressed` boolean *(optional)*
+    
+    An attribute that is usually set by `aria-pressed`.
+    
+    Learn more about [`aria-pressed`](https://www.w3.org/TR/wai-aria-1.2/#aria-pressed).
+  - `selected` boolean *(optional)*
+    
+    An attribute that is usually set by `aria-selected`.
+    
+    Learn more about [`aria-selected`](https://www.w3.org/TR/wai-aria-1.2/#aria-selected).
+
+**Returns**
+- Locator
+
+**Details**
+
+Role selector **does not replace** accessibility audits and conformance tests, but rather gives early feedback about the ARIA guidelines.
+
+Many html elements have an implicitly [defined role](https://w3c.github.io/html-aam/#html-element-role-mappings) that is recognized by the role selector. You can find all the [supported roles here](https://www.w3.org/TR/wai-aria-1.2/#role_definitions). ARIA guidelines **do not recommend** duplicating implicit roles and attributes by setting `role` and/or `aria-*` attributes to default values.
+
+---
+
+### getByTestId {/* #frame-locator-get-by-test-id */}
+
+
+
+Locate element by the test id.
+
+**Usage**
+
+Consider the following DOM structure.
+
+```html
+<button data-testid="directions">Itinéraire</button>
+```
+
+You can locate the element by its test id:
+
+```js
+await page.getByTestId('directions').click();
+```
+
+**Arguments**
+- `testId` string | RegExp
+  
+  Id to locate the element by.
+
+**Returns**
+- Locator
+
+**Details**
+
+By default, the `data-testid` attribute is used as a test id. Use [selectors.setTestIdAttribute()](/api/class-selectors.mdx#selectors-set-test-id-attribute) to configure a different test id attribute if necessary.
+
+```js
+// Set custom test id attribute from @playwright/test config:
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  use: {
+    testIdAttribute: 'data-pw'
+  },
+});
+```
+
+---
+
+### getByText {/* #frame-locator-get-by-text */}
+
+
+
+Allows locating elements that contain given text.
+
+See also [locator.filter()](/api/class-locator.mdx#locator-filter) that allows to match by another criteria, like an accessible role, and then filter by the text content.
+
+**Usage**
+
+Consider the following DOM structure:
+
+```html
+<div>Hello <span>world</span></div>
+<div>Hello</div>
+```
+
+You can locate by text substring, exact string, or a regular expression:
+
+```js
+// Matches <span>
+page.getByText('world');
+
+// Matches first <div>
+page.getByText('Hello world');
+
+// Matches second <div>
+page.getByText('Hello', { exact: true });
+
+// Matches both <div>s
+page.getByText(/Hello/);
+
+// Matches second <div>
+page.getByText(/^hello$/i);
+```
+
+**Arguments**
+- `text` string | RegExp
+  
+  Text to locate the element for.
+- `options` Object *(optional)*
+  - `exact` boolean *(optional)*
+    
+    Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace.
+
+**Returns**
+- Locator
+
+**Details**
+
+Matching by text always normalizes whitespace, even with exact match. For example, it turns multiple spaces into one, turns line breaks into spaces and ignores leading and trailing whitespace.
+
+Input elements of the type `button` and `submit` are matched by their `value` instead of the text content. For example, locating by text `"Log in"` matches `<input type=button value="Log in">`.
+
+---
+
+### getByTitle {/* #frame-locator-get-by-title */}
+
+
+
+Allows locating elements by their title attribute.
+
+**Usage**
+
+Consider the following DOM structure.
+
+```html
+<span title='Issues count'>25 issues</span>
+```
+
+You can check the issues count after locating it by the title text:
+
+```js
+await expect(page.getByTitle('Issues count')).toHaveText('25 issues');
+```
+
+**Arguments**
+- `text` string | RegExp
+  
+  Text to locate the element for.
+- `options` Object *(optional)*
+  - `exact` boolean *(optional)*
+    
+    Whether to find an exact match: case-sensitive and whole-string. Default to false. Ignored when locating by a regular expression. Note that exact match still trims whitespace.
+
+**Returns**
+- Locator
+
+---
+
+### locator {/* #frame-locator-locator */}
+
+
+
+The method finds an element matching the specified selector in the locator's subtree. It also accepts filter options, similar to [locator.filter()](/api/class-locator.mdx#locator-filter) method.
+
+[Learn more about locators](../locators.mdx).
+
+**Usage**
+
+```js
+frameLocator.locator(selectorOrLocator);
+frameLocator.locator(selectorOrLocator, options);
+```
+
+**Arguments**
+- `selectorOrLocator` string | Locator
+  
+  A selector or locator to use when resolving DOM element.
+- `options` Object *(optional)*
+  - `has` Locator *(optional)*
+    
+    Narrows down the results of the method to those which contain elements matching this relative locator. For example, `article` that has `text=Playwright` matches `<article><div>Playwright</div></article>`.
+    
+    Inner locator **must be relative** to the outer locator and is queried starting with the outer locator match, not the document root. For example, you can find `content` that has `div` in `<article><content><div>Playwright</div></content></article>`. However, looking for `content` that has `article div` will fail, because the inner locator must be relative and should not use any elements outside the `content`.
+    
+    Note that outer and inner locators must belong to the same frame. Inner locator must not contain FrameLocators.
+  - `hasNot` Locator *(optional)* 
+    
+    Matches elements that do not contain an element that matches an inner locator. Inner locator is queried against the outer one. For example, `article` that does not have `div` matches `<article><span>Playwright</span></article>`.
+    
+    Note that outer and inner locators must belong to the same frame. Inner locator must not contain FrameLocators.
+  - `hasNotText` string | RegExp *(optional)* 
+    
+    Matches elements that do not contain specified text somewhere inside, possibly in a child or a descendant element. When passed a string, matching is case-insensitive and searches for a substring.
+  - `hasText` string | RegExp *(optional)*
+    
+    Matches elements containing specified text somewhere inside, possibly in a child or a descendant element. When passed a string, matching is case-insensitive and searches for a substring. For example, `"Playwright"` matches `<article><div>Playwright</div></article>`.
+
+**Returns**
+- Locator
+
+---
+
+### owner {/* #frame-locator-owner */}
+
+
+
+Returns a Locator object pointing to the same `iframe` as this frame locator.
+
+Useful when you have a FrameLocator object obtained somewhere, and later on would like to interact with the `iframe` element.
+
+For a reverse operation, use [locator.contentFrame()](/api/class-locator.mdx#locator-content-frame).
+
+**Usage**
+
+```js
+const frameLocator = page.locator('iframename="embedded"').contentFrame();
+// ...
+const locator = frameLocator.owner();
+await expect(locator).toBeVisible();
+```
+
+**Returns**
+- Locator
+
+---
+
+## Deprecated
+
+### first {/* #frame-locator-first */}
+
+
+
+:::warningDeprecated
+
+Use [locator.first()](/api/class-locator.mdx#locator-first) followed by [locator.contentFrame()](/api/class-locator.mdx#locator-content-frame) instead.
+
+:::
+
+
+Returns locator to the first matching frame.
+
+**Usage**
+
+```js
+frameLocator.first();
+```
+
+**Returns**
+- FrameLocator
+
+---
+
+### last {/* #frame-locator-last */}
+
+
+
+:::warningDeprecated
+
+Use [locator.last()](/api/class-locator.mdx#locator-last) followed by [locator.contentFrame()](/api/class-locator.mdx#locator-content-frame) instead.
+
+:::
+
+
+Returns locator to the last matching frame.
+
+**Usage**
+
+```js
+frameLocator.last();
+```
+
+**Returns**
+- FrameLocator
+
+---
+
+### nth {/* #frame-locator-nth */}
+
+
+
+:::warningDeprecated
+
+Use [locator.nth()](/api/class-locator.mdx#locator-nth) followed by [locator.contentFrame()](/api/class-locator.mdx#locator-content-frame) instead.
+
+:::
+
+
+Returns locator to the n-th matching frame. It's zero based, `nth(0)` selects the first frame.
+
+**Usage**
+
+```js
+frameLocator.nth(index);
+```
+
+**Arguments**
+- `index` number
+
+**Returns**
+- FrameLocator
+
+
+APIRequest: /api/class-apirequest.mdx "APIRequest"
+APIRequestContext: /api/class-apirequestcontext.mdx "APIRequestContext"
+APIResponse: /api/class-apiresponse.mdx "APIResponse"
+APIResponseAssertions: /api/class-apiresponseassertions.mdx "APIResponseAssertions"
+Browser: /api/class-browser.mdx "Browser"
+BrowserContext: /api/class-browsercontext.mdx "BrowserContext"
+BrowserServer: /api/class-browserserver.mdx "BrowserServer"
+BrowserType: /api/class-browsertype.mdx "BrowserType"
+CDPSession: /api/class-cdpsession.mdx "CDPSession"
+Clock: /api/class-clock.mdx "Clock"
+ConsoleMessage: /api/class-consolemessage.mdx "ConsoleMessage"
+Coverage: /api/class-coverage.mdx "Coverage"
+Credentials: /api/class-credentials.mdx "Credentials"
+Debugger: /api/class-debugger.mdx "Debugger"
+Dialog: /api/class-dialog.mdx "Dialog"
+Disposable: /api/class-disposable.mdx "Disposable"
+Download: /api/class-download.mdx "Download"
+ElementHandle: /api/class-elementhandle.mdx "ElementHandle"
+FileChooser: /api/class-filechooser.mdx "FileChooser"
+Frame: /api/class-frame.mdx "Frame"
+FrameLocator: /api/class-framelocator.mdx "FrameLocator"
+GenericAssertions: /api/class-genericassertions.mdx "GenericAssertions"
+JSHandle: /api/class-jshandle.mdx "JSHandle"
+Keyboard: /api/class-keyboard.mdx "Keyboard"
+Locator: /api/class-locator.mdx "Locator"
+LocatorAssertions: /api/class-locatorassertions.mdx "LocatorAssertions"
+Logger: /api/class-logger.mdx "Logger"
+Mouse: /api/class-mouse.mdx "Mouse"
+Page: /api/class-page.mdx "Page"
+PageAssertions: /api/class-pageassertions.mdx "PageAssertions"
+Playwright: /api/class-playwright.mdx "Playwright"
+PlaywrightAssertions: /api/class-playwrightassertions.mdx "PlaywrightAssertions"
+Request: /api/class-request.mdx "Request"
+Response: /api/class-response.mdx "Response"
+Route: /api/class-route.mdx "Route"
+Screencast: /api/class-screencast.mdx "Screencast"
+Selectors: /api/class-selectors.mdx "Selectors"
+SnapshotAssertions: /api/class-snapshotassertions.mdx "SnapshotAssertions"
+TimeoutError: /api/class-timeouterror.mdx "TimeoutError"
+Touchscreen: /api/class-touchscreen.mdx "Touchscreen"
+Tracing: /api/class-tracing.mdx "Tracing"
+Video: /api/class-video.mdx "Video"
+WebError: /api/class-weberror.mdx "WebError"
+WebSocket: /api/class-websocket.mdx "WebSocket"
+WebSocketRoute: /api/class-websocketroute.mdx "WebSocketRoute"
+WebStorage: /api/class-webstorage.mdx "WebStorage"
+Worker: /api/class-worker.mdx "Worker"
+Electron: /api/class-electron.mdx "Electron"
+ElectronApplication: /api/class-electronapplication.mdx "ElectronApplication"
+Android: /api/class-android.mdx "Android"
+AndroidDevice: /api/class-androiddevice.mdx "AndroidDevice"
+AndroidInput: /api/class-androidinput.mdx "AndroidInput"
+AndroidSocket: /api/class-androidsocket.mdx "AndroidSocket"
+AndroidWebView: /api/class-androidwebview.mdx "AndroidWebView"
+Fixtures: /api/class-fixtures.mdx "Fixtures"
+FullConfig: /api/class-fullconfig.mdx "FullConfig"
+FullProject: /api/class-fullproject.mdx "FullProject"
+Location: /api/class-location.mdx "Location"
+Test: /api/class-test.mdx "Test"
+TestConfig: /api/class-testconfig.mdx "TestConfig"
+TestInfo: /api/class-testinfo.mdx "TestInfo"
+TestInfoError: /api/class-testinfoerror.mdx "TestInfoError"
+TestOptions: /api/class-testoptions.mdx "TestOptions"
+TestProject: /api/class-testproject.mdx "TestProject"
+TestStepInfo: /api/class-teststepinfo.mdx "TestStepInfo"
+WorkerInfo: /api/class-workerinfo.mdx "WorkerInfo"
+Reporter: /api/class-reporter.mdx "Reporter"
+Suite: /api/class-suite.mdx "Suite"
+TestCase: /api/class-testcase.mdx "TestCase"
+TestError: /api/class-testerror.mdx "TestError"
+TestResult: /api/class-testresult.mdx "TestResult"
+TestRun: /api/class-testrun.mdx "TestRun"
+TestStep: /api/class-teststep.mdx "TestStep"
+Element: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
+EvaluationArgument: /evaluating.mdx#evaluation-argument "EvaluationArgument"
+Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
+iterator: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
+origin: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
+selector: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors "selector"
+Serializable: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description "Serializable"
+UIEvent.detail: https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail "UIEvent.detail"
+UnixTime: https://en.wikipedia.org/wiki/Unix_time "Unix Time"
+xpath: https://developer.mozilla.org/en-US/docs/Web/XPath "xpath"
+
+AbortSignal: https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal "AbortSignal"
+Array: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
+boolean: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"
+Buffer: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
+ChildProcess: https://nodejs.org/api/child_process.html "ChildProcess"
+Date: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date "Date"
+Error: https://nodejs.org/api/errors.html#errors_class_error "Error"
+EventEmitter: https://nodejs.org/api/events.html#events_class_eventemitter "EventEmitter"
+function: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
+FormData: https://developer.mozilla.org/en-US/docs/Web/API/FormData "FormData"
+Map: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map "Map"
+Metadata: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object<string, any>"
+null: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null "null"
+number: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
+Object: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
+Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
+Readable: https://nodejs.org/api/stream.html#stream_class_stream_readable "Readable"
+ReadStream: https://nodejs.org/api/fs.html#class-fsreadstream "ReadStream"
+RegExp: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp "RegExp"
+string: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "string"
+void: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined "void"
+URL: https://nodejs.org/api/url.html "URL"
+URLPattern: https://developer.mozilla.org/en-US/docs/Web/API/URLPattern "URLPattern"
+URLSearchParams: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams "URLSearchParams"
+
+all available image tags: https://mcr.microsoft.com/en-us/product/playwright/about "all available image tags"
+Microsoft Artifact Registry: https://mcr.microsoft.com/en-us/product/playwright/about "Microsoft Artifact Registry"
+Dockerfile.noble: https://github.com/microsoft/playwright/blob/main/utils/docker/Dockerfile.noble "Dockerfile.noble"

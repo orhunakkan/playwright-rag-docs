@@ -1,0 +1,567 @@
+# FullConfig
+
+> **Source:** [playwright.dev/docs/api/class-fullconfig](https://playwright.dev/docs/api/class-fullconfig)
+
+---
+
+Resolved configuration which is accessible via [testInfo.config](/api/class-testinfo.mdx#test-info-config) and is passed to the test reporters. To see the format of Playwright configuration file, please see TestConfig instead.
+
+
+---
+
+## Properties
+
+### argv {/* #full-config-argv */}
+
+
+
+Snapshot of [`process.argv`](https://nodejs.org/api/process.html#processargv) captured in the runner process. Useful for reading custom command-line arguments — for example, args supplied after the `--` separator (`npx playwright test -- --build-path=./out`). Playwright does not parse these; consumers are responsible for slicing and interpreting them with any argument-parsing library.
+
+**Usage**
+
+```js
+fullConfig.argv
+```
+
+**Type**
+- Array<string>
+
+---
+
+### configFile {/* #full-config-config-file */}
+
+
+
+Path to the configuration file used to run the tests. The value is an empty string if no config file was used.
+
+**Usage**
+
+```js
+fullConfig.configFile
+```
+
+**Type**
+- string
+
+---
+
+### failOnFlakyTests {/* #full-config-fail-on-flaky-tests */}
+
+
+
+See [testConfig.failOnFlakyTests](/api/class-testconfig.mdx#test-config-fail-on-flaky-tests).
+
+**Usage**
+
+```js
+fullConfig.failOnFlakyTests
+```
+
+**Type**
+- boolean
+
+---
+
+### forbidOnly {/* #full-config-forbid-only */}
+
+
+
+See [testConfig.forbidOnly](/api/class-testconfig.mdx#test-config-forbid-only).
+
+**Usage**
+
+```js
+fullConfig.forbidOnly
+```
+
+**Type**
+- boolean
+
+---
+
+### fullyParallel {/* #full-config-fully-parallel */}
+
+
+
+See [testConfig.fullyParallel](/api/class-testconfig.mdx#test-config-fully-parallel).
+
+**Usage**
+
+```js
+fullConfig.fullyParallel
+```
+
+**Type**
+- boolean
+
+---
+
+### globalSetup {/* #full-config-global-setup */}
+
+
+
+See [testConfig.globalSetup](/api/class-testconfig.mdx#test-config-global-setup).
+
+**Usage**
+
+```js
+fullConfig.globalSetup
+```
+
+**Type**
+- null | string
+
+---
+
+### globalTeardown {/* #full-config-global-teardown */}
+
+
+
+See [testConfig.globalTeardown](/api/class-testconfig.mdx#test-config-global-teardown).
+
+**Usage**
+
+```js
+fullConfig.globalTeardown
+```
+
+**Type**
+- null | string
+
+---
+
+### globalTimeout {/* #full-config-global-timeout */}
+
+
+
+See [testConfig.globalTimeout](/api/class-testconfig.mdx#test-config-global-timeout).
+
+**Usage**
+
+```js
+fullConfig.globalTimeout
+```
+
+**Type**
+- number
+
+---
+
+### grep {/* #full-config-grep */}
+
+
+
+See [testConfig.grep](/api/class-testconfig.mdx#test-config-grep).
+
+**Usage**
+
+```js
+fullConfig.grep
+```
+
+**Type**
+- RegExp | Array<RegExp>
+
+---
+
+### grepInvert {/* #full-config-grep-invert */}
+
+
+
+See [testConfig.grepInvert](/api/class-testconfig.mdx#test-config-grep-invert).
+
+**Usage**
+
+```js
+fullConfig.grepInvert
+```
+
+**Type**
+- null | RegExp | Array<RegExp>
+
+---
+
+### maxFailures {/* #full-config-max-failures */}
+
+
+
+See [testConfig.maxFailures](/api/class-testconfig.mdx#test-config-max-failures).
+
+**Usage**
+
+```js
+fullConfig.maxFailures
+```
+
+**Type**
+- number
+
+---
+
+### metadata {/* #full-config-metadata */}
+
+
+
+See [testConfig.metadata](/api/class-testconfig.mdx#test-config-metadata).
+
+**Usage**
+
+```js
+fullConfig.metadata
+```
+
+**Type**
+- Metadata
+
+---
+
+### preserveOutput {/* #full-config-preserve-output */}
+
+
+
+See [testConfig.preserveOutput](/api/class-testconfig.mdx#test-config-preserve-output).
+
+**Usage**
+
+```js
+fullConfig.preserveOutput
+```
+
+**Type**
+- "always" | "never" | "failures-only"
+
+---
+
+### projects {/* #full-config-projects */}
+
+
+
+List of resolved projects.
+
+**Usage**
+
+```js
+fullConfig.projects
+```
+
+**Type**
+- Array<FullProject>
+
+---
+
+### quiet {/* #full-config-quiet */}
+
+
+
+See [testConfig.quiet](/api/class-testconfig.mdx#test-config-quiet).
+
+**Usage**
+
+```js
+fullConfig.quiet
+```
+
+**Type**
+- boolean
+
+---
+
+### reportSlowTests {/* #full-config-report-slow-tests */}
+
+
+
+See [testConfig.reportSlowTests](/api/class-testconfig.mdx#test-config-report-slow-tests).
+
+**Usage**
+
+```js
+fullConfig.reportSlowTests
+```
+
+**Type**
+- null | Object
+  - `max` number
+    
+    The maximum number of slow test files to report.
+  - `threshold` number
+    
+    Test file duration in milliseconds that is considered slow.
+
+---
+
+### reporter {/* #full-config-reporter */}
+
+
+
+See [testConfig.reporter](/api/class-testconfig.mdx#test-config-reporter).
+
+**Usage**
+
+```js
+fullConfig.reporter
+```
+
+**Type**
+- string | Array<Object> | "list" | "dot" | "line" | "github" | "json" | "junit" | "null" | "html"
+  - `0` string
+    
+    Reporter name or module or file path
+  - `1` Object
+    
+    An object with reporter options if any
+
+---
+
+### rootDir {/* #full-config-root-dir */}
+
+
+
+Base directory for all relative paths used in the reporters.
+
+**Usage**
+
+```js
+fullConfig.rootDir
+```
+
+**Type**
+- string
+
+---
+
+### shard {/* #full-config-shard */}
+
+
+
+See [testConfig.shard](/api/class-testconfig.mdx#test-config-shard).
+
+**Usage**
+
+```js
+fullConfig.shard
+```
+
+**Type**
+- null | Object
+  - `total` number
+    
+    The total number of shards.
+  - `current` number
+    
+    The index of the shard to execute, one-based.
+
+---
+
+### tags {/* #full-config-tags */}
+
+
+
+Resolved global tags. See [testConfig.tag](/api/class-testconfig.mdx#test-config-tag).
+
+**Usage**
+
+```js
+fullConfig.tags
+```
+
+**Type**
+- Array<string>
+
+---
+
+### updateSnapshots {/* #full-config-update-snapshots */}
+
+
+
+See [testConfig.updateSnapshots](/api/class-testconfig.mdx#test-config-update-snapshots).
+
+**Usage**
+
+```js
+fullConfig.updateSnapshots
+```
+
+**Type**
+- "all" | "changed" | "missing" | "none"
+
+---
+
+### updateSourceMethod {/* #full-config-update-source-method */}
+
+
+
+See [testConfig.updateSourceMethod](/api/class-testconfig.mdx#test-config-update-source-method).
+
+**Usage**
+
+```js
+fullConfig.updateSourceMethod
+```
+
+**Type**
+- "overwrite" | "3way" | "patch"
+
+---
+
+### version {/* #full-config-version */}
+
+
+
+Playwright version.
+
+**Usage**
+
+```js
+fullConfig.version
+```
+
+**Type**
+- string
+
+---
+
+### webServer {/* #full-config-web-server */}
+
+
+
+See [testConfig.webServer](/api/class-testconfig.mdx#test-config-web-server).
+
+**Usage**
+
+```js
+fullConfig.webServer
+```
+
+**Type**
+- null | Object
+
+---
+
+### workers {/* #full-config-workers */}
+
+
+
+See [testConfig.workers](/api/class-testconfig.mdx#test-config-workers).
+
+**Usage**
+
+```js
+fullConfig.workers
+```
+
+**Type**
+- number
+
+
+APIRequest: /api/class-apirequest.mdx "APIRequest"
+APIRequestContext: /api/class-apirequestcontext.mdx "APIRequestContext"
+APIResponse: /api/class-apiresponse.mdx "APIResponse"
+APIResponseAssertions: /api/class-apiresponseassertions.mdx "APIResponseAssertions"
+Browser: /api/class-browser.mdx "Browser"
+BrowserContext: /api/class-browsercontext.mdx "BrowserContext"
+BrowserServer: /api/class-browserserver.mdx "BrowserServer"
+BrowserType: /api/class-browsertype.mdx "BrowserType"
+CDPSession: /api/class-cdpsession.mdx "CDPSession"
+Clock: /api/class-clock.mdx "Clock"
+ConsoleMessage: /api/class-consolemessage.mdx "ConsoleMessage"
+Coverage: /api/class-coverage.mdx "Coverage"
+Credentials: /api/class-credentials.mdx "Credentials"
+Debugger: /api/class-debugger.mdx "Debugger"
+Dialog: /api/class-dialog.mdx "Dialog"
+Disposable: /api/class-disposable.mdx "Disposable"
+Download: /api/class-download.mdx "Download"
+ElementHandle: /api/class-elementhandle.mdx "ElementHandle"
+FileChooser: /api/class-filechooser.mdx "FileChooser"
+Frame: /api/class-frame.mdx "Frame"
+FrameLocator: /api/class-framelocator.mdx "FrameLocator"
+GenericAssertions: /api/class-genericassertions.mdx "GenericAssertions"
+JSHandle: /api/class-jshandle.mdx "JSHandle"
+Keyboard: /api/class-keyboard.mdx "Keyboard"
+Locator: /api/class-locator.mdx "Locator"
+LocatorAssertions: /api/class-locatorassertions.mdx "LocatorAssertions"
+Logger: /api/class-logger.mdx "Logger"
+Mouse: /api/class-mouse.mdx "Mouse"
+Page: /api/class-page.mdx "Page"
+PageAssertions: /api/class-pageassertions.mdx "PageAssertions"
+Playwright: /api/class-playwright.mdx "Playwright"
+PlaywrightAssertions: /api/class-playwrightassertions.mdx "PlaywrightAssertions"
+Request: /api/class-request.mdx "Request"
+Response: /api/class-response.mdx "Response"
+Route: /api/class-route.mdx "Route"
+Screencast: /api/class-screencast.mdx "Screencast"
+Selectors: /api/class-selectors.mdx "Selectors"
+SnapshotAssertions: /api/class-snapshotassertions.mdx "SnapshotAssertions"
+TimeoutError: /api/class-timeouterror.mdx "TimeoutError"
+Touchscreen: /api/class-touchscreen.mdx "Touchscreen"
+Tracing: /api/class-tracing.mdx "Tracing"
+Video: /api/class-video.mdx "Video"
+WebError: /api/class-weberror.mdx "WebError"
+WebSocket: /api/class-websocket.mdx "WebSocket"
+WebSocketRoute: /api/class-websocketroute.mdx "WebSocketRoute"
+WebStorage: /api/class-webstorage.mdx "WebStorage"
+Worker: /api/class-worker.mdx "Worker"
+Electron: /api/class-electron.mdx "Electron"
+ElectronApplication: /api/class-electronapplication.mdx "ElectronApplication"
+Android: /api/class-android.mdx "Android"
+AndroidDevice: /api/class-androiddevice.mdx "AndroidDevice"
+AndroidInput: /api/class-androidinput.mdx "AndroidInput"
+AndroidSocket: /api/class-androidsocket.mdx "AndroidSocket"
+AndroidWebView: /api/class-androidwebview.mdx "AndroidWebView"
+Fixtures: /api/class-fixtures.mdx "Fixtures"
+FullConfig: /api/class-fullconfig.mdx "FullConfig"
+FullProject: /api/class-fullproject.mdx "FullProject"
+Location: /api/class-location.mdx "Location"
+Test: /api/class-test.mdx "Test"
+TestConfig: /api/class-testconfig.mdx "TestConfig"
+TestInfo: /api/class-testinfo.mdx "TestInfo"
+TestInfoError: /api/class-testinfoerror.mdx "TestInfoError"
+TestOptions: /api/class-testoptions.mdx "TestOptions"
+TestProject: /api/class-testproject.mdx "TestProject"
+TestStepInfo: /api/class-teststepinfo.mdx "TestStepInfo"
+WorkerInfo: /api/class-workerinfo.mdx "WorkerInfo"
+Reporter: /api/class-reporter.mdx "Reporter"
+Suite: /api/class-suite.mdx "Suite"
+TestCase: /api/class-testcase.mdx "TestCase"
+TestError: /api/class-testerror.mdx "TestError"
+TestResult: /api/class-testresult.mdx "TestResult"
+TestRun: /api/class-testrun.mdx "TestRun"
+TestStep: /api/class-teststep.mdx "TestStep"
+Element: https://developer.mozilla.org/en-US/docs/Web/API/element "Element"
+EvaluationArgument: /evaluating.mdx#evaluation-argument "EvaluationArgument"
+Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
+iterator: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols "Iterator"
+origin: https://developer.mozilla.org/en-US/docs/Glossary/Origin "Origin"
+selector: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors "selector"
+Serializable: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#Description "Serializable"
+UIEvent.detail: https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail "UIEvent.detail"
+UnixTime: https://en.wikipedia.org/wiki/Unix_time "Unix Time"
+xpath: https://developer.mozilla.org/en-US/docs/Web/XPath "xpath"
+
+AbortSignal: https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal "AbortSignal"
+Array: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array "Array"
+boolean: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Boolean_type "Boolean"
+Buffer: https://nodejs.org/api/buffer.html#buffer_class_buffer "Buffer"
+ChildProcess: https://nodejs.org/api/child_process.html "ChildProcess"
+Date: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date "Date"
+Error: https://nodejs.org/api/errors.html#errors_class_error "Error"
+EventEmitter: https://nodejs.org/api/events.html#events_class_eventemitter "EventEmitter"
+function: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function "Function"
+FormData: https://developer.mozilla.org/en-US/docs/Web/API/FormData "FormData"
+Map: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map "Map"
+Metadata: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object<string, any>"
+null: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null "null"
+number: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type "Number"
+Object: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object "Object"
+Promise: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise "Promise"
+Readable: https://nodejs.org/api/stream.html#stream_class_stream_readable "Readable"
+ReadStream: https://nodejs.org/api/fs.html#class-fsreadstream "ReadStream"
+RegExp: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp "RegExp"
+string: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#String_type "string"
+void: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined "void"
+URL: https://nodejs.org/api/url.html "URL"
+URLPattern: https://developer.mozilla.org/en-US/docs/Web/API/URLPattern "URLPattern"
+URLSearchParams: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams "URLSearchParams"
+
+all available image tags: https://mcr.microsoft.com/en-us/product/playwright/about "all available image tags"
+Microsoft Artifact Registry: https://mcr.microsoft.com/en-us/product/playwright/about "Microsoft Artifact Registry"
+Dockerfile.noble: https://github.com/microsoft/playwright/blob/main/utils/docker/Dockerfile.noble "Dockerfile.noble"
