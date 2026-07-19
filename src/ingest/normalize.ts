@@ -1,14 +1,21 @@
 export interface NormalizeResult {
   title: string;
+  /** Present on sources that publish an exact live URL in frontmatter (e.g. TypeScript's docs). */
+  permalink?: string;
   body: string;
 }
 
-function extractFrontmatter(raw: string): { title: string; rest: string } {
+function extractFrontmatter(raw: string): { title: string; permalink?: string; rest: string } {
   const fmMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
   if (!fmMatch) return { title: '', rest: raw };
   const frontmatter = fmMatch[1];
   const titleMatch = frontmatter.match(/^title:\s*"?(.*?)"?\s*$/m);
-  return { title: titleMatch ? titleMatch[1] : '', rest: raw.slice(fmMatch[0].length) };
+  const permalinkMatch = frontmatter.match(/^permalink:\s*"?(.*?)"?\s*$/m);
+  return {
+    title: titleMatch ? titleMatch[1] : '',
+    permalink: permalinkMatch ? permalinkMatch[1] : undefined,
+    rest: raw.slice(fmMatch[0].length)
+  };
 }
 
 function stripThemeImports(text: string): string {
@@ -80,7 +87,7 @@ function resolveH1(body: string, title: string): string {
 }
 
 export function normalizeMdx(raw: string): NormalizeResult {
-  const { title, rest } = extractFrontmatter(raw.replace(/\r\n/g, '\n'));
+  const { title, permalink, rest } = extractFrontmatter(raw.replace(/\r\n/g, '\n'));
   let text = rest;
   text = stripThemeImports(text);
   text = unwrapTabs(text);
@@ -89,5 +96,5 @@ export function normalizeMdx(raw: string): NormalizeResult {
   text = stripAnchorDecorations(text);
   text = resolveTypeRefs(text);
   text = resolveH1(text, title);
-  return { title: title || 'Untitled', body: `${text.trim()}\n` };
+  return { title: title || 'Untitled', permalink, body: `${text.trim()}\n` };
 }

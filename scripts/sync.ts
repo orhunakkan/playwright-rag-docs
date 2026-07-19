@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { chunkMarkdown } from '../src/chunk/chunker.js';
 import { cleanupClone, cloneDocsRepo } from '../src/ingest/clone.js';
 import { normalizeMdx } from '../src/ingest/normalize.js';
-import { SOURCES } from '../src/ingest/sources.js';
+import { PLAYWRIGHT_DEV_REPO, SOURCES } from '../src/ingest/sources.js';
 import { readSourceFiles } from '../src/ingest/walk.js';
 import { buildFileContent, buildSourceUrl, flattenRelPath, writeNormalizedFile } from '../src/ingest/write.js';
 import { createDb, indexChunks, persistIndex } from '../src/search/buildIndex.js';
@@ -10,7 +10,7 @@ import type { Chunk, DocType, Language, SyncMeta } from '../src/types.js';
 
 async function main() {
   console.log('Cloning microsoft/playwright.dev (shallow)...');
-  const { repoPath, commitSha } = await cloneDocsRepo();
+  const { repoPath, commitSha } = await cloneDocsRepo(PLAYWRIGHT_DEV_REPO);
 
   const allChunks: Chunk[] = [];
   const counts: Record<Language, Partial<Record<DocType, number>>> = {
@@ -31,7 +31,7 @@ async function main() {
         const sourceUrl = buildSourceUrl(source, rawDoc.relPath);
         const fileContent = buildFileContent(body, sourceUrl);
         const fileSlug = flattenRelPath(rawDoc.relPath);
-        const outPath = (await writeNormalizedFile(source, fileSlug, fileContent)).split('\\').join('/');
+        const outPath = (await writeNormalizedFile(source.outputDir, fileSlug, fileContent)).split('\\').join('/');
 
         const chunks = chunkMarkdown(fileContent, {
           language: source.language,

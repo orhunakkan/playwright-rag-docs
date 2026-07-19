@@ -36,12 +36,8 @@ export function buildFileContent(body: string, sourceUrl: string): string {
   return lines.join('\n');
 }
 
-export async function writeNormalizedFile(
-  source: SourceDescriptor,
-  fileSlug: string,
-  content: string
-): Promise<string> {
-  const outPath = join(source.outputDir, `${fileSlug}.md`);
+export async function writeNormalizedFile(outputDir: string, fileSlug: string, content: string): Promise<string> {
+  const outPath = join(outputDir, `${fileSlug}.md`);
   await mkdir(dirname(outPath), { recursive: true });
   await writeFile(outPath, content, 'utf8');
   return outPath;
