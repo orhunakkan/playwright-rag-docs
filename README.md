@@ -1,4 +1,4 @@
-# playwright-rag-docs
+# docs-rag-mcp
 
 A local-only RAG (Retrieval-Augmented Generation) pipeline that turns official Playwright, TypeScript, JavaScript, and Node.js runtime documentation into a searchable knowledge base, served to coding agents through the [Model Context Protocol](https://modelcontextprotocol.io) (MCP).
 
@@ -136,8 +136,8 @@ data/                                 Gitignored build output: indexes + sync me
 **Prerequisites:** Node.js ≥ 20.
 
 ```bash
-git clone https://github.com/orhunakkan/playwright-rag-docs.git
-cd playwright-rag-docs
+git clone https://github.com/orhunakkan/docs-rag-mcp.git
+cd docs-rag-mcp
 npm install
 ```
 
@@ -177,7 +177,7 @@ Add an entry to your MCP client's config (Claude Code, Claude Desktop, Cursor, e
     "playwright-typescript-docs": {
       "command": "npx",
       "args": ["tsx", "src/server/index.ts"],
-      "cwd": "/absolute/path/to/playwright-rag-docs"
+      "cwd": "/absolute/path/to/docs-rag-mcp"
     }
   }
 }
