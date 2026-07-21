@@ -8,10 +8,12 @@ export interface ClonedRepo {
   commitSha: string;
 }
 
-export async function cloneDocsRepo(repoUrl: string): Promise<ClonedRepo> {
+/** @param ref Optional branch or tag to pin the shallow clone to (defaults to the repo's default branch). */
+export async function cloneDocsRepo(repoUrl: string, ref?: string): Promise<ClonedRepo> {
   const repoPath = await mkdtemp(join(tmpdir(), 'playwright-rag-docs-sync-'));
   const git = simpleGit();
-  await git.clone(repoUrl, repoPath, ['--depth', '1']);
+  const args = ref ? ['--depth', '1', '--branch', ref] : ['--depth', '1'];
+  await git.clone(repoUrl, repoPath, args);
   const commitSha = (await simpleGit(repoPath).revparse(['HEAD'])).trim();
   return { repoPath, commitSha };
 }

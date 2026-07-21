@@ -7,6 +7,9 @@ import { loadIndex as loadTsIndex, type TsDb } from '../typescript/buildIndex.js
 import { hybridSearch as tsHybridSearch, type TsSearchResult } from '../typescript/query.js';
 import { loadIndex as loadJsIndex, type JsDb } from '../javascript/buildIndex.js';
 import { hybridSearch as jsHybridSearch, type JsSearchResult } from '../javascript/query.js';
+import { loadIndex as loadNodeIndex, type NodeDb } from '../node/buildIndex.js';
+import { hybridSearch as nodeHybridSearch, type NodeSearchResult } from '../node/query.js';
+import { NODE_TAG } from '../node/sources.js';
 
 const server = new McpServer({ name: 'playwright-rag-docs', version: '1.0.0' });
 
@@ -35,6 +38,15 @@ function getJsDb(): Promise<JsDb> {
     jsDbPromise = loadJsIndex();
   }
   return jsDbPromise;
+}
+
+let nodeDbPromise: Promise<NodeDb> | undefined;
+
+function getNodeDb(): Promise<NodeDb> {
+  if (!nodeDbPromise) {
+    nodeDbPromise = loadNodeIndex();
+  }
+  return nodeDbPromise;
 }
 
 function formatResults(results: SearchResult[]): string {
@@ -69,6 +81,18 @@ function formatJsResults(results: JsSearchResult[]): string {
     .map((result) => {
       const path = result.headingPath ? `${result.title} > ${result.headingPath}` : result.title;
       return `### [${result.section}] ${path}\n\n${result.content}\n\nSource: ${result.sourceUrl}`;
+    })
+    .join('\n\n---\n\n');
+}
+
+function formatNodeResults(results: NodeSearchResult[]): string {
+  if (results.length === 0) {
+    return 'No matching Node.js runtime documentation found.';
+  }
+  return results
+    .map((result) => {
+      const path = result.headingPath ? `${result.title} > ${result.headingPath}` : result.title;
+      return `### [${result.module}] ${path}\n\n${result.content}\n\nSource: ${result.sourceUrl}`;
     })
     .join('\n\n---\n\n');
 }
@@ -142,6 +166,24 @@ server.registerTool(
     const db = await getJsDb();
     const results = await jsHybridSearch(db, query, { limit, section });
     return { content: [{ type: 'text', text: formatJsResults(results) }] };
+  }
+);
+
+server.registerTool(
+  'search_node_runtime_docs',
+  {
+    title: 'Search Node.js Runtime Docs',
+    description: `Hybrid (keyword + semantic) search over the official Node.js runtime API reference (nodejs.org/api), pinned to ${NODE_TAG} LTS — fs, http, stream, buffer, worker_threads, child_process, etc. Unrelated to Playwright, TypeScript, or JavaScript-the-language. Each result includes any "Added in"/"Deprecated since"/history metadata Node's own docs record for that API, plus a cited source URL. Pass \`module\` when you know the relevant module (e.g. "fs", "stream") — unfiltered queries search across all modules.`,
+    inputSchema: {
+      query: z.string().describe('Natural-language question or exact API name (e.g. "fs.readFile" or "how do I pipe a readable stream")'),
+      limit: z.number().int().min(1).max(20).optional().describe('Max results to return (default 5)'),
+      module: z.string().optional().describe('Restrict results to one module by its doc/api file stem (e.g. "fs", "http", "child_process", "stream")')
+    }
+  },
+  async ({ query, limit, module }) => {
+    const db = await getNodeDb();
+    const results = await nodeHybridSearch(db, query, { limit, module });
+    return { content: [{ type: 'text', text: formatNodeResults(results) }] };
   }
 );
 

@@ -1,7 +1,7 @@
 {
   "name": "playwright-rag-docs",
   "version": "1.0.0",
-  "description": "Local-only RAG pipeline over Playwright (Node.js/Python/Java/.NET), TypeScript, and JavaScript (MDN) documentation, exposed as MCP server tools.",
+  "description": "Local-only RAG pipeline over Playwright (Node.js/Python/Java/.NET), TypeScript, JavaScript (MDN), and Node.js runtime documentation, exposed as MCP server tools.",
   "license": "ISC",
   "author": "Orhun Akkan",
   "type": "module",
@@ -13,14 +13,15 @@
     "sync:playwright": "tsx scripts/sync.ts",
     "sync:typescript": "tsx scripts/sync-typescript.ts",
     "sync:javascript": "tsx scripts/sync-javascript.ts",
+    "sync:node": "tsx scripts/sync-node.ts",
     "mcp": "tsx src/server/index.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
-    "@msgpack/msgpack": "^3.1.2",
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "@msgpack/msgpack": "^3.1.2",
     "@orama/orama": "^3.1.18",
     "@orama/plugin-data-persistence": "^3.1.18",
     "github-slugger": "^2.0.0",
@@ -28,6 +29,7 @@
     "remark": "^15.0.1",
     "simple-git": "^3.36.0",
     "unified": "^11.0.5",
+    "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
