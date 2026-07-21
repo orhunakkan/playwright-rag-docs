@@ -5,6 +5,8 @@ import { loadIndex, type Db } from '../search/buildIndex.js';
 import { hybridSearch, type SearchResult } from '../search/query.js';
 import { loadIndex as loadTsIndex, type TsDb } from '../typescript/buildIndex.js';
 import { hybridSearch as tsHybridSearch, type TsSearchResult } from '../typescript/query.js';
+import { loadIndex as loadJsIndex, type JsDb } from '../javascript/buildIndex.js';
+import { hybridSearch as jsHybridSearch, type JsSearchResult } from '../javascript/query.js';
 
 const server = new McpServer({ name: 'playwright-rag-docs', version: '1.0.0' });
 
@@ -26,6 +28,15 @@ function getTsDb(): Promise<TsDb> {
   return tsDbPromise;
 }
 
+let jsDbPromise: Promise<JsDb> | undefined;
+
+function getJsDb(): Promise<JsDb> {
+  if (!jsDbPromise) {
+    jsDbPromise = loadJsIndex();
+  }
+  return jsDbPromise;
+}
+
 function formatResults(results: SearchResult[]): string {
   if (results.length === 0) {
     return 'No matching Playwright documentation found.';
@@ -41,6 +52,18 @@ function formatResults(results: SearchResult[]): string {
 function formatTsResults(results: TsSearchResult[]): string {
   if (results.length === 0) {
     return 'No matching TypeScript documentation found.';
+  }
+  return results
+    .map((result) => {
+      const path = result.headingPath ? `${result.title} > ${result.headingPath}` : result.title;
+      return `### [${result.section}] ${path}\n\n${result.content}\n\nSource: ${result.sourceUrl}`;
+    })
+    .join('\n\n---\n\n');
+}
+
+function formatJsResults(results: JsSearchResult[]): string {
+  if (results.length === 0) {
+    return 'No matching JavaScript documentation found.';
   }
   return results
     .map((result) => {
@@ -100,6 +123,25 @@ server.registerTool(
     const db = await getTsDb();
     const results = await tsHybridSearch(db, query, { limit, section });
     return { content: [{ type: 'text', text: formatTsResults(results) }] };
+  }
+);
+
+server.registerTool(
+  'search_javascript_docs',
+  {
+    title: 'Search JavaScript Docs',
+    description:
+      'Hybrid (keyword + semantic) search over the core JavaScript language docs from MDN (developer.mozilla.org) — the language Guide and Reference (global objects, operators, statements, errors, etc.), not the broader Web/DOM API surface MDN also hosts. Unrelated to Playwright or TypeScript. Returns cited excerpts with source URLs.',
+    inputSchema: {
+      query: z.string().describe('Natural-language question or exact API name (e.g. "Array.prototype.flatMap" or "how do closures work")'),
+      limit: z.number().int().min(1).max(20).optional().describe('Max results to return (default 5)'),
+      section: z.enum(['general', 'guide', 'reference']).optional().describe('Restrict results to one documentation section')
+    }
+  },
+  async ({ query, limit, section }) => {
+    const db = await getJsDb();
+    const results = await jsHybridSearch(db, query, { limit, section });
+    return { content: [{ type: 'text', text: formatJsResults(results) }] };
   }
 );
 
