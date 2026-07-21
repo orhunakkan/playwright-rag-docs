@@ -174,7 +174,7 @@ Add an entry to your MCP client's config (Claude Code, Claude Desktop, Cursor, e
 ```json
 {
   "mcpServers": {
-    "playwright-typescript-docs": {
+    "docs-rag-mcp": {
       "command": "npx",
       "args": ["tsx", "src/server/index.ts"],
       "cwd": "/absolute/path/to/docs-rag-mcp"
